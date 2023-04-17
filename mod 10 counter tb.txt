@@ -1,0 +1,73 @@
+`timescale 1ns / 1ps
+
+module mod_10_counter_tb(
+
+    );
+    	// Inputs
+    reg clk;
+    reg rst;
+    reg pwr;
+    reg loaden;
+    reg [3:0] load;
+
+    // Outputs
+    wire [3:0]count;
+
+    // Instantiate the Unit Under Test (UUT)
+    mod_10_counter uut (
+        .clk(clk), 
+        .rst(rst), 
+        .count(count), 
+        .pwr(pwr), 
+        .loaden(loaden), 
+        .load(load)
+    );
+
+    always #5 clk=~clk;
+task initialise;
+    begin
+        clk=0;
+        rst=0;
+       pwr=0;
+       loaden=0;
+       load=0;
+    end
+endtask
+task power(input a);
+    begin
+         @(negedge clk)
+         pwr=a;
+    end
+endtask
+task reset;
+    begin
+         @(negedge clk)
+         rst=1;
+         @(negedge clk)
+         rst=0;
+    end
+endtask
+task loadtask(input [3:0]b);
+    begin
+         @(negedge clk)
+         loaden=1;
+         load=b;
+         @(negedge clk)
+         loaden=0;
+    end
+endtask
+initial
+    begin
+         initialise;
+         reset;
+         power(1);
+         #100;    
+         //#50;
+         loadtask(4'b0111);
+         #30;
+         loadtask(4'b1011);
+         #50;
+         $finish;
+    end
+
+endmodule

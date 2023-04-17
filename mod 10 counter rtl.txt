@@ -1,0 +1,30 @@
+`timescale 1ns / 1ps
+
+module mod_10_counter(clk,rst,count,pwr,loaden,load
+
+    );
+    input clk ,rst,pwr,loaden;
+    output reg[3:0]count;
+    input [3:0]load;
+    always@(posedge clk)
+    begin
+         if(~pwr)
+            count<=0;
+         else
+         begin
+            if(rst)
+                count<=0;
+            else if(loaden)
+            begin
+                if(load > 4'b1001)
+                    count<=count+1;
+                else
+                    count<=load;
+            end
+         else if(count==4'b1001)
+            count<=0;
+         else if(count!=4'b1001)
+            count<=count+1;
+         end
+    end
+endmodule
